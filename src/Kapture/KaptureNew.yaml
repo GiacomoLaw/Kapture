@@ -1,0 +1,12 @@
+name: Kapture
+author: kalilistic, Giacomo
+punchline: Track your loot.
+description: |-
+    Kapture is a loot tracker to capture drops, obtained items, rolls, and more.
+    Use the roll monitor to see who you are waiting on to roll.
+tags:
+    - loot
+    - track
+    - roll
+repo_url: https://github.com/GiacomoLaw/Kapture
+

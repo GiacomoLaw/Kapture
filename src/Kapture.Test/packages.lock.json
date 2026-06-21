@@ -104,7 +104,7 @@
           "xunit.extensibility.core": "[2.8.1]"
         }
       },
-      "kapture": {
+      "KaptureNew": {
         "type": "Project",
         "dependencies": {
           "DalamudPackager": "[15.0.0, )"

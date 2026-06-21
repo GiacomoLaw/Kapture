@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<Version>2.0.0.0</Version>
 		<Title>Kapture</Title>
+		<AssemblyName>KaptureNew</AssemblyName>
 		<Authors>kalilistic, maintained by Khayle</Authors>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
