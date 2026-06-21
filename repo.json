@@ -1,0 +1,19 @@
+[
+    {
+        "Author": "MKhayle, Giacomo",
+        "Name": "Kapture",
+        "Punchline": "Dalamud plugin to track your loot in FFXIV.",
+        "Description": "Dalamud plugin to track your loot in FFXIV.",
+        "InternalName": "KaptureNew",
+        "AssemblyVersion": "2.0.0.0",
+        "RepoUrl": "https://github.com/GiacomoLaw/Kapture",
+        "ApplicableVersion": "any",
+        "DownloadLinkInstall": "https://github.com/GiacomoLaw/Kapture/releases/download/api15/latest.zip",
+        "IsHide": false,
+        "IsTestingExclusive": false,
+        "DownloadLinkTesting": "https://github.com/GiacomoLaw/Kapture/releases/download/api15/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/GiacomoLaw/Kapture/releases/download/api15/latest.zip",
+        "DownloadCount": 0,
+        "LastUpdated": "1766192783",
+    }
+]
