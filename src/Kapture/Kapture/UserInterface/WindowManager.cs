@@ -31,6 +31,7 @@ namespace Kapture
 
             // add event listeners
             KapturePlugin.PluginInterface.UiBuilder.Draw += this.Draw;
+            KapturePlugin.PluginInterface.UiBuilder.OpenMainUi += this.OpenMainUi;
             KapturePlugin.PluginInterface.UiBuilder.OpenConfigUi += this.OpenConfigUi;
         }
 
@@ -73,6 +74,7 @@ namespace Kapture
         public void Dispose()
         {
             KapturePlugin.PluginInterface.UiBuilder.Draw -= this.Draw;
+            KapturePlugin.PluginInterface.UiBuilder.OpenMainUi -= this.OpenMainUi;
             KapturePlugin.PluginInterface.UiBuilder.OpenConfigUi -= this.OpenConfigUi;
             this.LootWindowSystem.RemoveAllWindows();
             this.RollWindowSystem.RemoveAllWindows();
@@ -97,9 +99,14 @@ namespace Kapture
             }
         }
 
+        private void OpenMainUi()
+        {
+            this.SettingsWindow!.IsOpen = true;
+        }
+
         private void OpenConfigUi()
         {
-            this.SettingsWindow!.IsOpen ^= true;
+            this.SettingsWindow!.IsOpen = true;
         }
     }
 }

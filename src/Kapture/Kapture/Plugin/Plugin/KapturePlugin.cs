@@ -317,6 +317,7 @@ namespace Kapture
             try
             {
                 this.DisposeListeners();
+                this.WindowManager?.Dispose();
                 this.LootLogger.Dispose();
                 this.LootHTTP.Dispose();
                 this.LootDiscord.Dispose();
