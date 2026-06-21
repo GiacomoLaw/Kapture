@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 
 using CheapLoc;
+using Dalamud.Game.Chat;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Party;
 using Dalamud.Game.Command;
@@ -106,6 +107,12 @@ namespace Kapture
         /// </summary>
         [PluginService]
         public static IPartyList PartyList { get; private set; } = null!;
+
+        /// <summary>
+        /// Gets object table.
+        /// </summary>
+        [PluginService]
+        public static IObjectTable ObjectTable { get; private set; } = null!;
 
         /// <summary>
         /// Gets framework.
@@ -221,13 +228,13 @@ namespace Kapture
         /// <inheritdoc />
         public string GetLocalPlayerName()
         {
-            return ClientState.LocalPlayer?.Name.ToString() ?? string.Empty;
+            return ObjectTable.LocalPlayer?.Name.ToString() ?? string.Empty;
         }
 
         /// <inheritdoc />
         public string GetLocalPlayerWorld()
         {
-            return ClientState.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? string.Empty;
+            return ObjectTable.LocalPlayer?.HomeWorld.ValueNullable?.Name.ExtractText() ?? string.Empty;
         }
 
         /// <inheritdoc />
@@ -482,7 +489,7 @@ namespace Kapture
             ClientState.TerritoryChanged -= this.TerritoryChanged;
         }
 
-        private void TerritoryChanged(ushort territoryType)
+        private void TerritoryChanged(uint territoryType)
         {
             try
             {
@@ -500,20 +507,19 @@ namespace Kapture
             }
         }
 
-        private void ChatMessageHandled(
-            XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
+        private void ChatMessageHandled(IHandleableChatMessage chatMessage)
         {
             // check if enabled
             if (!this.Configuration.Enabled) return;
 
             // log for debugging
-            if (this.Configuration.DebugLoggingEnabled) PluginLog.Info("[ChatMessage]" + type + ":" + message);
+            if (this.Configuration.DebugLoggingEnabled) PluginLog.Info("[ChatMessage]" + chatMessage.LogKind + ":" + chatMessage.Message);
 
             // combat check
             if (this.Configuration.RestrictInCombat && this.InCombat()) return;
 
             // lookup territory and content
-            var xivChatType = (ushort)type;
+            var xivChatType = (ushort)chatMessage.LogKind;
             var territoryTypeId = this.GetTerritoryType();
             var contentId = this.GetContentId();
 
@@ -527,8 +533,8 @@ namespace Kapture
 
             // filter out bad messages
             if (!Enum.IsDefined(typeof(LootMessageType), xivChatType)) return;
-            if (!message.Payloads.Any(payload => payload is ItemPayload)) return;
-            var logKind = (LogKind)((uint)type & ~(~0 << 7));
+            if (!chatMessage.Message.Payloads.Any(payload => payload is ItemPayload)) return;
+            var logKind = (LogKind)((uint)chatMessage.LogKind & ~(~0 << 7));
             if (!Enum.IsDefined(typeof(LogKind), logKind)) return;
 
             // build initial loot message
@@ -537,7 +543,7 @@ namespace Kapture
                 XivChatType = xivChatType,
                 LogKind = logKind,
                 LootMessageType = (LootMessageType)xivChatType,
-                Message = message.TextValue,
+                Message = chatMessage.Message.TextValue,
             };
 
             // add name fields for logging/display
@@ -545,7 +551,7 @@ namespace Kapture
             lootMessage.LootMessageTypeName = Enum.GetName(typeof(LootMessageType), lootMessage.LootMessageType) ?? string.Empty;
 
             // add item and message part payloads
-            foreach (var payload in message.Payloads)
+            foreach (var payload in chatMessage.Message.Payloads)
             {
                 switch (payload)
                 {
@@ -617,12 +623,12 @@ namespace Kapture
 
         private bool IsHighEndDuty()
         {
-            return ContentExtension.InHighEndDuty(DataManager, ClientState.TerritoryType);
+            return ContentExtension.InHighEndDuty(DataManager, (ushort)ClientState.TerritoryType);
         }
 
         private uint GetContentId()
         {
-            return ContentExtension.ContentId(DataManager, ClientState.TerritoryType);
+            return ContentExtension.ContentId(DataManager, (ushort)ClientState.TerritoryType);
         }
 
         private uint GetTerritoryType()
