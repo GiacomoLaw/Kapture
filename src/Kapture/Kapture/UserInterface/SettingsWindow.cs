@@ -7,7 +7,7 @@ using CheapLoc;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using static Kapture.DisplayMode;
 using static Kapture.NameFormat;
