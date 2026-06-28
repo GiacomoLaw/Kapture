@@ -153,18 +153,26 @@ namespace Kapture
                     {
                         lootRoll = this.plugin.LootRolls.FirstOrDefault(roll =>
                             roll.ItemId == lootEvent.LootMessage.ItemId &&
-                            roll.Rollers.Any(roller =>
-                                roller.PlayerName.Equals(lootEvent.PlayerName) && roller.Roll == 0));
-                        var lootRoller = lootRoll?.Rollers.FirstOrDefault(roller =>
-                            roller.PlayerName.Equals(lootEvent.PlayerName) && roller.Roll == 0);
-                        if (lootRoller == null) return;
+                            !roll.IsWon);
+                        if (lootRoll == null) return;
+                        var lootRoller = lootRoll.Rollers.FirstOrDefault(roller => roller.PlayerName.Equals(lootEvent.PlayerName));
+                        if (lootRoller == null)
+                        {
+                            lootRoller = new LootRoller
+                            {
+                                PlayerName = lootEvent.PlayerName,
+                                IsLocalPlayer = lootEvent.IsLocalPlayer,
+                            };
+                            lootRoll.Rollers.Add(lootRoller);
+                        }
+
+                        if (!lootRoller.HasRolled) lootRoll.RollerCount += 1;
+                        lootRoller.HasRolled = true;
                         lootRoller.Roll = lootEvent.Roll;
                         lootRoller.RollColor = GetColorByNumber(lootRoller.Roll);
                         if (lootRoller.Roll != 0)
                         {
-                            lootRoller.PlayerName = this.plugin.FormatPlayerName(
-                                                                 this.plugin.Configuration.ChatNameFormat,
-                                                                 lootRoller.PlayerName) + " [" + lootRoller.Roll + "]";
+                            lootRoller.PlayerName = lootEvent.PlayerName + " [" + lootRoller.Roll + "]";
                         }
 
                         break;
@@ -178,7 +186,7 @@ namespace Kapture
                         if (lootRoll == null) return;
                         lootRoll.Timestamp = lootEvent.Timestamp;
                         var winningRoller =
-                            lootRoll.Rollers.FirstOrDefault(roller => roller.PlayerName.Equals(lootEvent.PlayerName));
+                            lootRoll.Rollers.FirstOrDefault(roller => roller.PlayerName.StartsWith(lootEvent.PlayerName));
                         if (winningRoller != null) winningRoller.IsWinner = true;
                         lootRoll.Timestamp = lootEvent.Timestamp;
                         lootRoll.IsWon = true;
