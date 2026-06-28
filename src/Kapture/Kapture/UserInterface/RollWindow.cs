@@ -59,9 +59,10 @@ namespace Kapture
                         ImGui.Separator();
                         foreach (var roller in lootRoll.Rollers)
                         {
+                            var rollerNameDisplay = roller.Roll == 0 ? roller.PlayerName : roller.PlayerName + " [" + roller.Roll + "]";
                             if (roller.HasRolled)
                             {
-                                ImGui.TextColored(roller.RollColor, roller.PlayerName);
+                                ImGui.TextColored(roller.RollColor, rollerNameDisplay);
                                 ImGui.SameLine();
                                 ImGui.PushFont(UiBuilder.IconFont);
                                 ImGui.TextColored(roller.RollColor, FontAwesomeIcon.Check.ToIconString());
@@ -69,7 +70,7 @@ namespace Kapture
                             }
                             else if (lootRoll.IsWon)
                             {
-                                ImGui.TextColored(roller.RollColor, roller.PlayerName);
+                                ImGui.TextColored(roller.RollColor, rollerNameDisplay);
                                 ImGui.SameLine();
                                 ImGui.PushFont(UiBuilder.IconFont);
                                 ImGui.TextColored(roller.RollColor, FontAwesomeIcon.Times.ToIconString());
@@ -77,7 +78,7 @@ namespace Kapture
                             }
                             else
                             {
-                                ImGui.TextColored(roller.RollColor, roller.PlayerName);
+                                ImGui.TextColored(roller.RollColor, rollerNameDisplay);
                             }
                         }
 
